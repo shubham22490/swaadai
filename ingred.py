@@ -26,8 +26,7 @@ def updateDataset(key, url, text, page_size):
     if response:
         print("API call successful.")
         print(response)
-        for item in response["payload"]["data"]:
-            if item!=
+        for item in response["payload"]["data"][1:]:
             final_data.append(item["recipe_no"])
 
         with open('ingred.txt', 'a') as f:

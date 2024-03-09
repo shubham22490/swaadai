@@ -200,8 +200,6 @@ def get_response_if_null(prompt):
     convo.send_message(prompt+'if asked for recipe provide recipe with 1 line intro of dish, ingredients and recipe or else just answer normally as if your a kitchen assisten called Swaad')
     return convo.last.text
 
-def check_output(prompt,output):
-    convo.send(f'prompt: {prompt}, output:{output}, if the output is not related to promp then generate your your own output')
 def get_description(name: str, payload: str) -> str:
     convo.send_message("create a description for " + payload + " with the name " + name + "in strictly 30 words or less")
     return convo.last.text
