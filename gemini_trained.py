@@ -90,8 +90,6 @@ def verification(last_text: str) -> str:
             dish_list = food_list
     except ValueError:
         return last_text
-    except BlockedPromptException:
-        return "Seems like I can't help you with this :("
     except TypeError:
         return "Something went wrong, please try again"
 
@@ -103,12 +101,7 @@ def do_it_all(query: str) -> str:
     try:
         ret_val = verification(sendQuery(query))
         return ret_val
-    except BlockedPromptException:
-        return "Seems like I can't help you with this :("
-    except TypeError:
-        return "Something went wrong, please try again"
-    except ValueError:
-        return "Something went wrong, please try again"
+
     except Exception as e:
         return "Something went wrong, please try again"
 

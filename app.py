@@ -74,10 +74,10 @@ if st.session_state.messages[-1]["role"] != "assistant":
             placeholder = st.empty()
             full_response = ''
             if response is None:
-                response = "Seems like I can't help you with this :("
+                response = gemini_untrained.get_response_if_null(promptText)
             for item in response:
                 full_response += item
                 placeholder.markdown(full_response)
-            placeholder.markdown(full_response)
+            placeholder.markdown(gemini_untrained.check_output(promptText, full_response))
     message = {"role": "assistant", "content": full_response}
     st.session_state.messages.append(message)
