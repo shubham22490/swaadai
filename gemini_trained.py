@@ -3,10 +3,8 @@ At the command line, only need to run once to install the package via pip:
 
 $ pip install google-generativeai
 """
-
+import google
 import google.generativeai as genai
-from google.generativeai.types import BlockedPromptException
-
 from gemini_untrained import get_response, get_reply, get_ques
 from recipeDB import recipeInfo
 import pickle
@@ -55,10 +53,14 @@ convo = model.start_chat(history=history)
 context = []
 
 def sendQuery(query: str):
-    convo.send_message(query)
-    response = convo.last.text
-    context.append("user input: " + query + " and its expected response: " + response)
-    return response
+    try:
+        convo.send_message(query)
+        response = convo.last.text
+        context.append("user input: " + query + " and its expected response: " + response)
+        return response
+    except google.api_core.exceptions.InternalServerError:
+        return "Something with google's api went wrong. Please try again"
+
 
 
 def verification(last_text: str) -> str:

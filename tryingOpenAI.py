@@ -6,7 +6,6 @@
 # client = OpenAI()
 #
 #
-# print(completion.choices[0].message)
 #
 # def get_response(list_of_dishes, context, input_query):
 #     list_of_dishes = ', '.join(list_of_dishes)
@@ -23,5 +22,5 @@
 #         ]
 #     )
 #     print("OPENAI'S RESPONSE-----------------------------------------------------")
-#     print(response.choices[0].text.strip())
+#     print(completion.choices[0].message)
 #     print("OPENAI'S RESPONSE-----------------------------------------------------")
