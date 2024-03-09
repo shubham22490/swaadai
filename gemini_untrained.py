@@ -195,6 +195,7 @@ def get_response(list_of_dishes, context, input_query):
     convo.send_message("list = " + list_of_dishes + " context = " + context + " query = " + input_query)
     return convo.last.text
 
+<<<<<<< HEAD
 def get_response_if_null(prompt):
     convo.send_message(prompt+'if asked for recipe provide recipe with 1 line intro of dish, ingredients and recipe or else just answer normally as if your a kitchen assisten called Swaad')
     return convo.last.text
@@ -204,3 +205,21 @@ def check_output(prompt,output):
 def get_description(name: str, payload: str) -> str:
     convo.send_message("create a description for " + payload + " with the name " + name + "in strictly 30 words or less")
     return convo.last.text
+=======
+
+def get_description(name: str, payload: str) -> str:
+    convo.send_message("create a description for " + payload + " with the name " + name + "in strictly 30 words or less")
+    # Wait for user input or function response
+    response = convo.get_response()
+    
+    # Check if response is from the user
+    if response.is_user_response():
+        # Process user response
+        return response.text
+    elif response.is_function_response():
+        # Process function response
+        return response.text
+    else:
+        # Handle unexpected response
+        return "Unexpected response received."
+>>>>>>> a286ffc20faa471bc0f1b592b9eb032bce4adda4

@@ -22,21 +22,18 @@ def make_api_call(api_key, api_url, search_text, page_size):
 def updateDataset(key, url, text, page_size):
     response = make_api_call(key, url, text, page_size)
     final_data = []
-    final_data_json = []
 
     if response:
         print("API call successful.")
         print(response)
         for item in response["payload"]["data"]:
+            if item!=
             final_data.append(item["recipe_no"])
 
-        # with open('filtered_data.json', 'a') as f:
-        #     json.dump(final_data_json, f, indent=2)
-        #
-        # with open('filtered_data_list.txt', 'a') as file:
-        #     for data in final_data:
-        #         data[0] = data[0].replace(',', ' ')
-        #         file.write(f"{data[0]}: {data[1]}, ")
+        with open('ingred.txt', 'a') as f:
+            for data in final_data:
+                f.write(f"{data}, ")
+
 
     else:
         print("API call failed.")
