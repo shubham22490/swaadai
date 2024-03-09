@@ -76,6 +76,5 @@ def get_response(list_of_dishes, context, input_query):
 
 
 def get_description(name: str, payload: str) -> str:
-    convo.send_message(
-        "create a description for " + payload + " with the name " + name + "in strictly 30 words or less")
+    convo.send_message("create a description for " + payload + " with the name " + name + "in strictly 30 words or less")
     return convo.last.text
