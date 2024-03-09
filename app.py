@@ -10,10 +10,6 @@ import gemini_untrained
 # App title
 st.set_page_config(page_title="swaadAI")
 
-# Initialize SpeechRecognition recognizer
-recognizer = sr.Recognizer()
-recognizer.pause_threshold = 1  # Adjust silence detection sensitivity (seconds)
-
 st.markdown("""
 # Swaad
 ### Your AI Kitchen Assistant
