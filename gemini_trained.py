@@ -109,6 +109,9 @@ def do_it_all(query: str) -> str:
         return "Something went wrong, please try again"
     except ValueError:
         return "Something went wrong, please try again"
+    except Exception as e:
+        return "Something went wrong, please try again"
+
 
 #
 # if __name__ == '__main__':
