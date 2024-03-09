@@ -1,4 +1,5 @@
 import streamlit as st
+import speech_recognition as sr
 from google.generativeai.types import BlockedPromptException
 
 import recipeDB
@@ -9,6 +10,10 @@ import gemini_untrained
 
 # App title
 st.set_page_config(page_title="swaadAI")
+
+# Initialize SpeechRecognition recognizer
+recognizer = sr.Recognizer()
+recognizer.pause_threshold = 1  # Adjust silence detection sensitivity (seconds)
 
 st.markdown("""
 # Swaad
@@ -22,7 +27,7 @@ def getDesc():
     payload = dayResponse["payload"]
     dayTitle = str(payload["Recipe_title"])
     path = str(payload["img_url"])
-    desc = gemini_untrained.get_description(dayTitle, str(payload))
+    desc = gemini_untrained.get_description(dayTitle, str(dayResponse['payload']))
     return dayTitle, path, desc
 
 
@@ -64,12 +69,11 @@ if promptText := st.chat_input():
 if st.session_state.messages[-1]["role"] != "assistant":
     with st.chat_message("assistant"):
         with st.spinner("Thinking..."):
-
             response = gemini_trained.do_it_all(promptText)
             placeholder = st.empty()
             full_response = ''
             if response is None:
-                response = gemini_untrained.get_response_if_null(promptText)
+                response = "Seems like I can't help you with this :("
             for item in response:
                 full_response += item
                 placeholder.markdown(full_response)

@@ -7,7 +7,7 @@ $ pip install google-generativeai
 import google.generativeai as genai
 from google.generativeai.types import BlockedPromptException
 
-from gemini_untrained import get_response
+from gemini_untrained import get_response, get_reply, get_ques
 from recipeDB import recipeInfo
 import pickle
 
@@ -54,7 +54,6 @@ convo = model.start_chat(history=history)
 
 context = []
 
-
 def sendQuery(query: str):
     convo.send_message(query)
     response = convo.last.text
@@ -67,45 +66,34 @@ def verification(last_text: str) -> str:
     try:
         food_list: list[int] = []
         for s in last_text.replace(",", " ").split(" "):
+            if len(s) == 0:
+                continue
             food_list.append(int(s))
         print(food_list)
-        valid_response: bool = True
-        """for food_index in food_list:
-            if str(food_index) in idset:
-                continue
-            else:
-                valid_response = False
-                break"""
-        if food_list[0] != -5 & food_list[0] != -10:
-            if valid_response:
-                dish_list: list[str] = []
-                for food_index in food_list:
-                    dish_list.append(recipeInfo(food_index))
-                    print(dish_list)
-                    print("context", context)
-                return get_response(dish_list, context, input_query)
-            else:
-                return "Something went wrong, please try again"
+
+        if food_list[0] != -5 and food_list[0] != -10:
+            dish_list: list[str] = []
+            for food_index in food_list:
+                food_data = recipeInfo(food_index)
+                dish_list.append(str({"ingridients" : str(food_data["ingredients"]), "instructions" : str(food_data["instructions"])}))
+                print(dish_list)
+                print("context", context)
+                # opai.get_response(dish_list, context, last_text)
+                return get_response(dish_list, context, last_text)
+        elif food_list[0] == -5:
+            return get_ques(str(context), last_text)
         else:
-            dish_list = food_list
+            return get_reply(str(context), last_text)
+
     except ValueError:
         return last_text
-    except TypeError:
-        return "Something went wrong, please try again"
-
-
-input_query = str()
 
 
 def do_it_all(query: str) -> str:
-    try:
-        ret_val = verification(sendQuery(query))
-        return ret_val
-
-    except Exception as e:
-        return "Something went wrong, please try again"
+    ret_val = verification(sendQuery(query))
+    return ret_val
 
 
 #
 # if __name__ == '__main__':
-#     print(verification(sendQuery("How to make palsta")))
+#     print()

@@ -233,6 +233,33 @@ history = [
     "role": "model",
     "parts": ["-10"]
   },
+  {
+    "role": "user",
+    "parts": [
+      "These are some of the recipe IDs that contain mushroom: 5467, 5514, 5544, 5448, 5504, 5461, 5547, 5588, 5576. Please remember."]
+  },
+  {
+    "role": "model",
+    "parts": ["Noted."]
+  },
+  {
+    "role": "user",
+    "parts": [
+      "These are some of the recipe IDs that contain beef: 5659, 5717, 5727, 5750, 5729, 5742, 5829, 5769, 5777. Please rememember."]
+  },
+  {
+    "role": "model",
+    "parts": ["Noted."]
+  },
+  {
+    "role": "user",
+    "parts": [
+      "These are some of the recipe IDs that contain paneer: 4306, 4336, 4364, 4366, 4501, 4659, 4212, 4255, 4350. Please remember."]
+  },
+  {
+    "role": "model",
+    "parts": ["Noted."]
+  },
 ]
 
 with open('state.pickle', 'wb') as f:

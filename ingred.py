@@ -31,10 +31,9 @@ def updateDataset(key, url, text, page_size):
             except KeyError:
                 continue
 
-        with open('ingred.txt', 'w') as f:
+        with open('ingred.txt', 'a') as f:
             for data in final_data:
                 f.write(f"{data}, ")
-
 
     else:
         print("API call failed.")
@@ -43,12 +42,7 @@ def updateDataset(key, url, text, page_size):
 key = "FzNRzSGS9M44jgSV85eNV0hpyz8x-9h1-R_kvGT5BquzSna8"
 url = "https://apis-new.foodoscope.com/recipe-search/ingredients"
 
-updateDataset(key, url, "Beef", 10)
-
-
-
-
-
+updateDataset(key, url, "Onion", 10)
 
 
 

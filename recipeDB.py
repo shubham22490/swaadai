@@ -28,7 +28,7 @@ def recipeInfo(recipe_id: int):
     # Get the recipe information from the API
     url: str = base + "recipe/" + str(recipe_id)
     response = requests.get(url, headers=headers)
-    return str(response.json()["payload"])
+    return response.json()["payload"]
 
 
 def searchBySubRegion(sub_region: str):
