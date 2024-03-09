@@ -1,1 +1,1 @@
-google_generativeai
+google-generativeai
