@@ -77,4 +77,16 @@ def get_response(list_of_dishes, context, input_query):
 
 def get_description(name: str, payload: str) -> str:
     convo.send_message("create a description for " + payload + " with the name " + name + "in strictly 30 words or less")
-    return convo.last.text
+    # Wait for user input or function response
+    response = convo.get_response()
+    
+    # Check if response is from the user
+    if response.is_user_response():
+        # Process user response
+        return response.text
+    elif response.is_function_response():
+        # Process function response
+        return response.text
+    else:
+        # Handle unexpected response
+        return "Unexpected response received."
