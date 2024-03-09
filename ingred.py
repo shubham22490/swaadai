@@ -22,14 +22,16 @@ def make_api_call(api_key, api_url, search_text, page_size):
 def updateDataset(key, url, text, page_size):
     response = make_api_call(key, url, text, page_size)
     final_data = []
-
     if response:
         print("API call successful.")
         print(response)
         for item in response["payload"]["data"][1:]:
-            final_data.append(item["recipe_no"])
+            try:
+                final_data.append(item["recipe_no"])
+            except KeyError:
+                continue
 
-        with open('ingred.txt', 'a') as f:
+        with open('ingred.txt', 'w') as f:
             for data in final_data:
                 f.write(f"{data}, ")
 
@@ -41,7 +43,7 @@ def updateDataset(key, url, text, page_size):
 key = "FzNRzSGS9M44jgSV85eNV0hpyz8x-9h1-R_kvGT5BquzSna8"
 url = "https://apis-new.foodoscope.com/recipe-search/ingredients"
 
-updateDataset(key, url, "Mushroom", 10)
+updateDataset(key, url, "Beef", 10)
 
 
 
