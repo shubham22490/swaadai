@@ -22,7 +22,7 @@ def getDesc():
     payload = dayResponse["payload"]
     dayTitle = str(payload["Recipe_title"])
     path = str(payload["img_url"])
-    desc = gemini_untrained.get_description(dayTitle, str(dayResponse['payload']))
+    desc = gemini_untrained.get_description(dayTitle, str(payload))
     return dayTitle, path, desc
 
 
