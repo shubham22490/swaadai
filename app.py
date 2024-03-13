@@ -5,8 +5,7 @@ from google.generativeai.types import BlockedPromptException
 import recipeDB
 import gemini_trained
 import gemini_untrained
-
-
+import gemini_trained
 
 # App title
 st.set_page_config(page_title="swaadAI")
@@ -15,6 +14,7 @@ st.markdown("""
 # Swaad
 ### Your AI Kitchen Assistant
 """)
+
 
 
 @st.cache_data
@@ -28,12 +28,24 @@ def getDesc():
 
 
 with st.sidebar:
-    st.title("Recipe of the day")
+
+    widget_title = "<h2 style='text-align: center;margin-top:0;'>RECIPE OF THE DAY</h2>"
+    widget_separator = "<hr style='margin-top: -5px;'>"
+
+    st.markdown(widget_title, unsafe_allow_html=True)
+    st.markdown(widget_separator, unsafe_allow_html=True)   
+
     name, img_path, desc = getDesc()
-    st.image(img_path)
+    st.image(img_path,  use_column_width=True)
     title = "<h2 style='text-align: center;'>" + name + "</h2>"
     st.markdown(title, True)
     st.markdown("<p style='text-align: justify;'>" + desc + "</p>", True)
+    
+    st.markdown("-----------------------------------------------------")
+    st.markdown("Swaad malfunctioning? Try:")
+    resetHistory = st.button("Refresh")
+    if resetHistory:
+        gemini_trained.setHistory('state.pickle')
 
 # Store LLM generated responses
 if "messages" not in st.session_state.keys():

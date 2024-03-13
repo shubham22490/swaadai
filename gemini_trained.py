@@ -19,6 +19,11 @@ generation_config = {
     "max_output_tokens": 2048,
 }
 
+def setHistory(fileName):
+    global history
+    with open(fileName, 'rb') as f:
+        history = pickle.load(f)
+
 safety_settings = [
     {
         "category": "HARM_CATEGORY_HARASSMENT",
@@ -42,8 +47,7 @@ model = genai.GenerativeModel(model_name="gemini-1.0-pro",
                               generation_config=generation_config,
                               safety_settings=safety_settings)
 
-with open('state.pickle', 'rb') as f:
-    history = pickle.load(f)
+setHistory('state.pickle')
 
 with open('state.pickle', 'rb') as f:
     idset = pickle.load(f)
