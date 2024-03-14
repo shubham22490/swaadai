@@ -38,7 +38,6 @@ with st.sidebar:
 
     name, img_path, url, desc = getDesc()
     st.markdown(f'<a href = "{url}"><img src="{img_path}" style="max-width: 100%; height: auto;"></a>\n', True)
-    # st.markdown(f"[![Image]({img_path})]({url})")
     title = "<h2 style='text-align: center;'>" + name + "</h2>"
     st.markdown(title, True)
     st.markdown("<p style='text-align: justify;'>" + desc + "</p>", True)
@@ -80,9 +79,9 @@ if promptText := st.chat_input():
 if st.session_state.messages[-1]["role"] != "assistant":
     with st.chat_message("assistant"):
         with st.spinner("Thinking..."):
-            full_response = ""
-            placeholder = st.empty()
             response = generate_response(promptText)
+            placeholder = st.empty()
+            full_response = ""
             if response is None:
                 full_response = "Seems like I can't help you with this :("
             elif(type(response) is not list):
@@ -95,7 +94,8 @@ if st.session_state.messages[-1]["role"] != "assistant":
                 else:
                     # If it's not an image, just append the text
                     full_response += item + '\n'
-            st.markdown(full_response, True)
+
+            placeholder.markdown(full_response, True)
 
     message = {"role": "assistant", "content": full_response}
     st.session_state.messages.append(message)
