@@ -29,29 +29,29 @@ genai.configure(api_key="AIzaSyB_7sD1vbc0ndTw3jdYPamQSBVpq8ztYls")
 
 # Set up the model
 generation_config = {
-  "temperature": 0.9,
-  "top_p": 1,
-  "top_k": 1,
-  "max_output_tokens": 2048,
+    "temperature": 0.9,
+    "top_p": 1,
+    "top_k": 1,
+    "max_output_tokens": 2048,
 }
 
 safety_settings = [
-  {
-    "category": "HARM_CATEGORY_HARASSMENT",
-    "threshold": "BLOCK_MEDIUM_AND_ABOVE"
-  },
-  {
-    "category": "HARM_CATEGORY_HATE_SPEECH",
-    "threshold": "BLOCK_MEDIUM_AND_ABOVE"
-  },
-  {
-    "category": "HARM_CATEGORY_SEXUALLY_EXPLICIT",
-    "threshold": "BLOCK_MEDIUM_AND_ABOVE"
-  },
-  {
-    "category": "HARM_CATEGORY_DANGEROUS_CONTENT",
-    "threshold": "BLOCK_MEDIUM_AND_ABOVE"
-  },
+    {
+        "category": "HARM_CATEGORY_HARASSMENT",
+        "threshold": "BLOCK_MEDIUM_AND_ABOVE"
+    },
+    {
+        "category": "HARM_CATEGORY_HATE_SPEECH",
+        "threshold": "BLOCK_MEDIUM_AND_ABOVE"
+    },
+    {
+        "category": "HARM_CATEGORY_SEXUALLY_EXPLICIT",
+        "threshold": "BLOCK_MEDIUM_AND_ABOVE"
+    },
+    {
+        "category": "HARM_CATEGORY_DANGEROUS_CONTENT",
+        "threshold": "BLOCK_MEDIUM_AND_ABOVE"
+    },
 ]
 
 model = genai.GenerativeModel(model_name="gemini-1.0-pro",
@@ -116,26 +116,67 @@ history = [
 ]
 convo = model.start_chat(history=history)
 
+
 def get_reply(context: str, input_query: str) -> str:
-    pre = """You are Swaad, an AI chatbot that can answer food and recipe related queries. Response to the user's query based on the context and input_query. Remember to use your own intelligence to give an informed and accurate response to the query. Also encourage the user to ask more questions related to food and recipes."""
+    pre = """You are Swaad, an AI chatbot that can answer food and recipe related queries. Response to the user's 
+    query based on the context and input_query. Remember to use your own intelligence to give an informed and 
+    accurate response to the query. Also encourage the user to ask more questions related to food and recipes."""
     try:
         convo.send_message(pre + "Context = " + context + "Query = " + input_query)
-        return convo.last.text
+        response = convo.last.text
+        if len(response) == 0:
+            return "None type response returned"
+        return response
     except google.api_core.exceptions.InternalServerError:
-        return  "Something went wrong with the google's api. Please try again"
+        return "Something went wrong with the google's api. Please try again"
+    except:
+        return "There was an error while generating a response"
+
 
 def get_ques(context: str, input_query: str) -> str:
-    pre = """You are Swaad, an AI chatbot that can answer food and recipe related queries. From your wit try to answer the question if it is not asking the recipe. otherwise you know, from the given context it's not possible to guess dish, so ask the follow up question to know more about the user's choice for the dish. But try to be creative and follow up the conversation further."""
-    convo.send_message(pre + "Context = " + context + "Query = " + input_query)
-    return convo.last.text
+    pre = """You are Swaad, an AI chatbot that can answer food and recipe related queries. From your wit try to 
+    answer the question if it is not asking the recipe. otherwise you know, from the given context it's not possible 
+    to guess dish, so ask the follow up question to know more about the user's choice for the dish. But try to be 
+    creative and follow up the conversation further."""
+    try:
+        convo.send_message(pre + "Context = " + context + "Query = " + input_query)
+        response = convo.last.text
+        if len(response) == 0:
+            return "None type question returned"
+        return response
+    except google.api_core.exceptions.InternalServerError:
+        return "Something went wrong with the google's api. Please try again"
+    except:
+        return "There was an error while generating follow up questions"
+
 
 def get_response(list_of_dishes, context, input_query):
     list_of_dishes = ', '.join(list_of_dishes)
     context = ', '.join(context)
-    pre = """User will ask you question in form "list, context, query". You need to use the list to state the recipe. It's assured that the list you get is correct. List contains recipe in form of ingridients and instructions, your task is to use that list to state the apt recipe. Also consider the query as it's what user has asked."""
-    convo.send_message(pre + " list = " + list_of_dishes + " Context = " + context + " query = " + input_query)
-    return convo.last.text
+    pre = """User will ask you question in form "list, context, query". You need to use the list to state the recipe. 
+    It's assured that the list you get is correct. List contains recipe in form of ingridients and instructions, 
+    your task is to use that list to state the apt recipe. Also consider the query as it's what user has asked."""
+    try:
+        convo.send_message(pre + " list = " + list_of_dishes + " context = " + context + " query = " + input_query)
+        response = convo.last.text
+        if len(response) == 0:
+            return "None type recipe returned"
+        return response
+    except google.api_core.exceptions.InternalServerError:
+        return "Something went wrong with the google's api. Please try again"
+    except:
+        return "There was an error while fetching response."
+
 
 def get_description(name: str, payload: str) -> str:
-    convo.send_message("create a description for " + payload + " with the name " + name + "in strictly 30 words or less")
-    return convo.last.text
+    try:
+        convo.send_message(
+            "create a description for " + payload + " with the name " + name + "in strictly 30 words or less")
+        response = convo.last.text
+        if len(response) == 0:
+            return "None type description returned"
+        return response
+    except google.api_core.exceptions.InternalServerError:
+        return "Something went wrong with the google's api. Please try again"
+    except Exception as e:
+        return "There was an error while fetching the description"

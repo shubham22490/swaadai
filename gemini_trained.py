@@ -8,6 +8,7 @@ import google.generativeai as genai
 from gemini_untrained import get_response, get_reply, get_ques
 from recipeDB import recipeInfo
 import pickle
+from icecream import ic
 
 genai.configure(api_key="AIzaSyDlPcLWQdCWkaVol1kEncwAk8rx66rplmI")
 
@@ -19,10 +20,12 @@ generation_config = {
     "max_output_tokens": 2048,
 }
 
+
 def setHistory(fileName):
     global history
     with open(fileName, 'rb') as f:
         history = pickle.load(f)
+
 
 safety_settings = [
     {
@@ -49,25 +52,31 @@ model = genai.GenerativeModel(model_name="gemini-1.0-pro",
 
 setHistory('state.pickle')
 
-with open('state.pickle', 'rb') as f:
+with open('idset.pickle', 'rb') as f:
     idset = pickle.load(f)
 
 convo = model.start_chat(history=history)
 
 context = []
 
+
 def sendQuery(query: str):
+    ic("query", query)
     try:
         convo.send_message(query)
         response = convo.last.text
+        ic("response", response)
+        if len(response) == 0:
+            return "None type query returned"
         context.append("user input: " + query + " and its expected response: " + response)
         return response
     except google.api_core.exceptions.InternalServerError:
         return "Something with google's api went wrong. Please try again"
+    except:
+        return "There was an error while fetching the query"
 
 
-
-def verification(last_text: str) -> str:
+def verification(last_text: str):
     print(last_text)
     try:
         food_list: list[int] = []
@@ -75,17 +84,23 @@ def verification(last_text: str) -> str:
             if len(s) == 0:
                 continue
             food_list.append(int(s))
-        print(food_list)
+        ic("food list: ", food_list)
+
+        for food in food_list:
+            if str(food) not in idset and food != -5 and food != -10:
+                return "Ai just hallucinated"
+
 
         if food_list[0] != -5 and food_list[0] != -10:
             dish_list = []
             for food_index in food_list:
                 food_data = recipeInfo(food_index)
                 img_url = food_data["img_url"]
-                dish_list.append(str({"Recipe Title": food_data["Recipe_title"], "ingridients" : str(food_data["ingredients"]), "instructions" : str(food_data["instructions"])}))
-                print(dish_list)
-                print("context", context)
-                # opai.get_response(dish_list, context, last_text)
+                dish_list.append(
+                    str({"Recipe Title": food_data["Recipe_title"], "ingredients": str(food_data["ingredients"]),
+                         "instructions": str(food_data["instructions"])}))
+                ic("dish list", dish_list, "\n")
+                ic("context", context)
                 return [img_url, get_response(dish_list, context, last_text)]
         elif food_list[0] == -5:
             return [get_ques(str(context), last_text)]
@@ -93,14 +108,11 @@ def verification(last_text: str) -> str:
             return [get_reply(str(context), last_text)]
 
     except ValueError:
-        return last_text
+        return [get_reply(str(context), last_text)]
 
 
 def do_it_all(query: str) -> str:
     ret_val = verification(sendQuery(query))
+    if ret_val is None:
+        return "Return"
     return ret_val
-
-
-#
-# if __name__ == '__main__':
-#     print()

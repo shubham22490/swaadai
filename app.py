@@ -2,12 +2,10 @@ import streamlit as st
 import clipboard
 from streamlit_extras.stylable_container import stylable_container
 
-from google.generativeai.types import BlockedPromptException
-
 import recipeDB
 import gemini_untrained
 import gemini_trained
-
+import speech_recognition as sr
 # App title
 st.set_page_config(page_title="swaadAI")
 
@@ -16,6 +14,11 @@ st.markdown("""
 ### Your AI Kitchen Assistant
 """)
 
+st.write("""
+<style>
+    
+</style>
+""", unsafe_allow_html=True)
 
 
 @st.cache_data
@@ -39,7 +42,7 @@ with st.sidebar:
 
     name, img_path, url, desc = getDesc()
     st.markdown(f'<a href = "{url}"><img src="{img_path}" style="max-width: 100%; height: auto;"></a>\n', True)
-    title = "<h2 style='text-align: center;'>" + name + "</h2>"
+    title = f'<a href = "{url}"><h2 style="text-align: center;">' + name + "</h2></a>"
     st.markdown(title, True)
     st.markdown("<p style='text-align: justify;'>" + desc + "</p>", True)
     
@@ -90,12 +93,38 @@ for message in st.session_state.messages:
 def generate_response(prompt_input):
     return gemini_trained.do_it_all(prompt_input)
 
+recognizer = sr.Recognizer()
+def process_voice_input():
+    with sr.Microphone() as source:
+        st.info("Listening...")
+        audio_data = recognizer.listen(source)
+
+    try:
+        query = recognizer.recognize_google(audio_data)
+        return query
+    except sr.UnknownValueError:
+        st.error("Sorry, I could not understand your query.")
+        return ""
+    except sr.RequestError:
+        st.error("Sorry, I'm unable to access the Google Speech Recognition API.")
+        return ""
 
 # User-provided prompt
-if promptText := st.chat_input():
+col1, col2 = st.columns([4,1])
+promptText = col1.chat_input("Enter your query:")
+if col2.button("🎤") or promptText is not None:
+    if promptText is None or promptText == "":
+        promptText = process_voice_input()
     st.session_state.messages.append({"role": "user", "content": promptText})
     with st.chat_message("user"):
         st.write(promptText)
+
+
+# User-provided prompt
+# if promptText := st.chat_input("Try to say something"):
+#     st.session_state.messages.append({"role": "user", "content": promptText})
+#     with st.chat_message("user"):
+#         st.write(promptText)
 
 # Generate a new response if last message is not from assistant
 if st.session_state.messages[-1]["role"] != "assistant":
@@ -121,6 +150,7 @@ if st.session_state.messages[-1]["role"] != "assistant":
             if len(st.session_state.copied) > 5:
                 st.session_state.copied.pop(0)
 
+            # Copy Button
             with stylable_container(
                     key="copy_button",
                     css_styles="""
