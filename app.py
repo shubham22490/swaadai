@@ -14,9 +14,18 @@ st.markdown("""
 ### Your AI Kitchen Assistant
 """)
 
-st.write("""
+st.markdown("""
 <style>
-    
+    .st-emotion-cache-ocqkz7{
+        position: fixed;
+        bottom: 3rem;
+        width: 48vw;
+    }
+    .block-container{
+        max-height: 85%;
+        overflow: scroll;
+        auto
+    }
 </style>
 """, unsafe_allow_html=True)
 
@@ -55,7 +64,7 @@ with st.sidebar:
         st.session_state.messages = [{"role": "assistant", "content": "How may I assist you today?"}]
 
 def on_copy_click(text):
-    st.session_state.copied.append(text)
+    st.session_state.copied = 1
     clipboard.copy(text)
 
 # Store LLM generated responses
@@ -63,7 +72,9 @@ if "messages" not in st.session_state.keys():
     st.session_state.messages = [{"role": "assistant", "content": "How may I assist you today?"}]
 
 if "copied" not in st.session_state:
-    st.session_state.copied = []
+    st.session_state.copied = 0
+
+
 
 count = 0
 # Display or clear chat messages
@@ -95,12 +106,12 @@ def generate_response(prompt_input):
 
 recognizer = sr.Recognizer()
 def process_voice_input():
-    with sr.Microphone() as source:
-        st.info("Listening...")
-        audio_data = recognizer.listen(source)
-
+    with st.spinner("Listening: "):
+        with sr.Microphone() as source:
+            audio_data = recognizer.listen(source)
     try:
         query = recognizer.recognize_google(audio_data)
+        print(query)
         return query
     except sr.UnknownValueError:
         st.error("Sorry, I could not understand your query.")
@@ -110,14 +121,16 @@ def process_voice_input():
         return ""
 
 # User-provided prompt
-col1, col2 = st.columns([4,1])
-promptText = col1.chat_input("Enter your query:")
-if col2.button("🎤") or promptText is not None:
-    if promptText is None or promptText == "":
-        promptText = process_voice_input()
-    st.session_state.messages.append({"role": "user", "content": promptText})
-    with st.chat_message("user"):
-        st.write(promptText)
+with st.container():
+    col1, col2 = st.columns([10,1])
+    promptText = col1.chat_input("Enter your query:")
+    if col2.button("🎤") or promptText is not None:
+        st.session_state.copied = 0
+        if promptText is None or promptText == "":
+            promptText = process_voice_input()
+        st.session_state.messages.append({"role": "user", "content": promptText})
+        with st.chat_message("user"):
+            st.write(promptText)
 
 
 # User-provided prompt
@@ -131,7 +144,7 @@ if st.session_state.messages[-1]["role"] != "assistant":
     with st.chat_message("assistant"):
         with st.spinner("Thinking..."):
             response = generate_response(promptText)
-            placeholder = st.empty()
+            placeholder = st.container()
             full_response = ""
             if response is None:
                 full_response = "Seems like I can't help you with this :("
@@ -146,24 +159,26 @@ if st.session_state.messages[-1]["role"] != "assistant":
                     # If it's not an image, just append the text
                     full_response += item + '\n'
 
-            placeholder.markdown(full_response, True)
-            if len(st.session_state.copied) > 5:
-                st.session_state.copied.pop(0)
+            with placeholder:
+                st.markdown(full_response, True)
 
-            # Copy Button
-            with stylable_container(
-                    key="copy_button",
-                    css_styles="""
-                        button:hover, button:active{
-                            background-color: green;
-                            border: none;
-                        }
-                        """,
-            ):
-                st.button("📋", on_click=on_copy_click, args=(full_response,))
+                # Copy Button
+                with stylable_container(
+                        key="copy_button",
+                        css_styles="""
+                            button:hover, button:active{
+                                background-color: green;
+                                border: none;
+                            }
+                            """,
+                ):
+                    st.button("📋", on_click=on_copy_click, args=(full_response,))
 
     message = {"role": "assistant", "content": full_response}
     st.session_state.messages.append(message)
 
-if len(st.session_state.copied):
+if st.session_state.copied:
     st.toast(f"Response copied to clipboard", icon='✅')
+
+
+
