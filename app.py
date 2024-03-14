@@ -1,9 +1,10 @@
 import streamlit as st
+import clipboard
+from streamlit_extras.stylable_container import stylable_container
 
 from google.generativeai.types import BlockedPromptException
 
 import recipeDB
-import gemini_trained
 import gemini_untrained
 import gemini_trained
 
@@ -50,14 +51,35 @@ with st.sidebar:
         # Do delete the chat history when refreshed clicked.
         st.session_state.messages = [{"role": "assistant", "content": "How may I assist you today?"}]
 
+def on_copy_click(text):
+    st.session_state.copied.append(text)
+    clipboard.copy(text)
+
 # Store LLM generated responses
 if "messages" not in st.session_state.keys():
     st.session_state.messages = [{"role": "assistant", "content": "How may I assist you today?"}]
 
+if "copied" not in st.session_state:
+    st.session_state.copied = []
+
+count = 0
 # Display or clear chat messages
 for message in st.session_state.messages:
     with st.chat_message(message["role"]):
         st.markdown(message["content"])
+        if(message["role"] == 'assistant' and message['content'] != "How may I assist you today?"):
+            with stylable_container(
+                key="copy_button_"+str(count),
+                css_styles="""
+                        button:hover, button:active{
+                            background-color: green;
+                            border: none;
+                        }
+                        """,
+            ):
+                st.button("📋", on_click=on_copy_click, args=(message["content"],), key=count)
+            count += 1
+
 
 
 # def clear_chat_history():
@@ -96,6 +118,22 @@ if st.session_state.messages[-1]["role"] != "assistant":
                     full_response += item + '\n'
 
             placeholder.markdown(full_response, True)
+            if len(st.session_state.copied) > 5:
+                st.session_state.copied.pop(0)
+
+            with stylable_container(
+                    key="copy_button",
+                    css_styles="""
+                        button:hover, button:active{
+                            background-color: green;
+                            border: none;
+                        }
+                        """,
+            ):
+                st.button("📋", on_click=on_copy_click, args=(full_response,))
 
     message = {"role": "assistant", "content": full_response}
     st.session_state.messages.append(message)
+
+if len(st.session_state.copied):
+    st.toast(f"Response copied to clipboard", icon='✅')
