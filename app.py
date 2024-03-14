@@ -26,6 +26,9 @@ st.markdown("""
         overflow: scroll;
         auto
     }
+    .st-emotion-cache-1y4p8pa{
+        padding: 5rem 1rem 0rem;
+    }
 </style>
 """, unsafe_allow_html=True)
 
