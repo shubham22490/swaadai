@@ -1,5 +1,4 @@
 import requests
-import json
 #shubham's recipedb key: Bir8n5fgaMxbiDgm6fgQxGwvnpbjuzbKtP5dSZWccJumhMjd
 #nishant's recipedb key (DONT USE): FzNRzSGS9M44jgSV85eNV0hpyz8x-9h1-R_kvGT5BquzSna8
 def make_api_call(api_key, api_url, search_text, page_size):

@@ -8,7 +8,6 @@ import google.generativeai as genai
 from gemini_untrained import get_response, get_reply, get_ques
 from recipeDB import recipeInfo
 import pickle
-from icecream import ic
 
 genai.configure(api_key="AIzaSyDlPcLWQdCWkaVol1kEncwAk8rx66rplmI")
 
@@ -61,11 +60,11 @@ context = []
 
 
 def sendQuery(query: str):
-    ic("query", query)
+    # ic("query", query)
     try:
         convo.send_message(query)
         response = convo.last.text
-        ic("response", response)
+        # ic("response", response)
         if len(response) == 0:
             return "None type query returned"
         context.append("user input: " + query + " and its expected response: " + response)
@@ -84,7 +83,7 @@ def verification(last_text: str):
             if len(s) == 0:
                 continue
             food_list.append(int(s))
-        ic("food list: ", food_list)
+        # ic("food list: ", food_list)
 
         for food in food_list:
             if str(food) not in idset and food != -5 and food != -10:
@@ -99,8 +98,8 @@ def verification(last_text: str):
                 dish_list.append(
                     str({"Recipe Title": food_data["Recipe_title"], "ingredients": str(food_data["ingredients"]),
                          "instructions": str(food_data["instructions"])}))
-                ic("dish list", dish_list, "\n")
-                ic("context", context)
+                # ic("dish list", dish_list, "\n")
+                # ic("context", context)
                 return [img_url, get_response(dish_list, context, last_text)]
         elif food_list[0] == -5:
             return [get_ques(str(context), last_text)]
