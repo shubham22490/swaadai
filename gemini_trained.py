@@ -78,18 +78,19 @@ def verification(last_text: str) -> str:
         print(food_list)
 
         if food_list[0] != -5 and food_list[0] != -10:
-            dish_list: list[str] = []
+            dish_list = []
             for food_index in food_list:
                 food_data = recipeInfo(food_index)
-                dish_list.append(str({"ingridients" : str(food_data["ingredients"]), "instructions" : str(food_data["instructions"])}))
+                img_url = food_data["img_url"]
+                dish_list.append(str({"Recipe Title": food_data["Recipe_title"], "ingridients" : str(food_data["ingredients"]), "instructions" : str(food_data["instructions"])}))
                 print(dish_list)
                 print("context", context)
                 # opai.get_response(dish_list, context, last_text)
-                return get_response(dish_list, context, last_text)
+                return [img_url, get_response(dish_list, context, last_text)]
         elif food_list[0] == -5:
-            return get_ques(str(context), last_text)
+            return [get_ques(str(context), last_text)]
         else:
-            return get_reply(str(context), last_text)
+            return [get_reply(str(context), last_text)]
 
     except ValueError:
         return last_text
