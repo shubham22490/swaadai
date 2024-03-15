@@ -75,7 +75,7 @@ def sendQuery(query: str):
         return "There was an error while fetching the query"
 
 
-def verification(last_text: str):
+def verification(last_text: str, query: str):
     print(last_text)
     try:
         food_list: list[int] = []
@@ -87,7 +87,7 @@ def verification(last_text: str):
 
         for food in food_list:
             if str(food) not in idset and food != -5 and food != -10:
-                return "Ai just hallucinated"
+                return "AI just hallucinated"
 
 
         if food_list[0] != -5 and food_list[0] != -10:
@@ -100,18 +100,18 @@ def verification(last_text: str):
                          "instructions": str(food_data["instructions"])}))
                 # ic("dish list", dish_list, "\n")
                 # ic("context", context)
-                return [img_url, get_response(dish_list, context, last_text)]
+                return [img_url, get_response(dish_list, context, query)]
         elif food_list[0] == -5:
-            return [get_ques(str(context), last_text)]
+            return [get_ques(str(context), query)]
         else:
-            return [get_reply(str(context), last_text)]
+            return [get_reply(str(context), query)]
 
     except ValueError:
-        return [get_reply(str(context), last_text)]
+        return [get_reply(str(context), query)]
 
 
 def do_it_all(query: str) -> str:
-    ret_val = verification(sendQuery(query))
+    ret_val = verification(sendQuery(query), query)
     if ret_val is None:
         return "Return"
     return ret_val

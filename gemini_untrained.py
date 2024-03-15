@@ -116,14 +116,18 @@ history = [
 ]
 convo = model.start_chat(history=history)
 
+history_second = []
 
 def get_reply(context: str, input_query: str) -> str:
     pre = """You are Swaad, an AI chatbot that can answer food and recipe related queries. Response to the user's 
     query based on the context and input_query. Remember to use your own intelligence to give an informed and 
     accurate response to the query. Also encourage the user to ask more questions related to food and recipes."""
     try:
-        convo.send_message(pre + "Context = " + context + "Query = " + input_query)
+        history_second_str = ', '.join(history_second)
+        convo.send_message(pre + " History of your conversation with user = " + history_second_str + "Query = " + input_query)
         response = convo.last.text
+        history_second.append("user input: " + input_query + ". and your response: " + response)
+        print("history of conversation:/n", history_second)
         if len(response) == 0:
             return "None type response returned"
         return response
@@ -134,13 +138,16 @@ def get_reply(context: str, input_query: str) -> str:
 
 
 def get_ques(context: str, input_query: str) -> str:
-    pre = """You are Swaad, an AI chatbot that can answer food and recipe related queries. From your wit try to 
-    answer the question if it is not asking the recipe. otherwise you know, from the given context it's not possible 
-    to guess dish, so ask the follow up question to know more about the user's choice for the dish. But try to be 
-    creative and follow up the conversation further."""
+    pre = """You are Swaad, an AI chatbot that can answer food and recipe related queries. From your intelligence try to 
+    answer the question if it is not asking the recipe. If from the given context it's not possible 
+    to guess dish, ask follow up questions to know more about the user's choice for the dish. But try to be 
+    creative and continue the conversation further."""
     try:
-        convo.send_message(pre + "Context = " + context + "Query = " + input_query)
+        history_second_str = ', '.join(history_second)
+        convo.send_message(pre + " History of your conversation with user = " + history_second_str + ". Query = " + input_query)
         response = convo.last.text
+        history_second.append("user input: " + input_query + ". and your response: " + response)
+        print("history of conversation:/n", history_second)
         if len(response) == 0:
             return "None type question returned"
         return response
@@ -150,15 +157,19 @@ def get_ques(context: str, input_query: str) -> str:
         return "There was an error while generating follow up questions"
 
 
+
 def get_response(list_of_dishes, context, input_query):
     list_of_dishes = ', '.join(list_of_dishes)
-    context = ', '.join(context)
-    pre = """User will ask you question in form "list, context, query". You need to use the list to state the recipe. 
-    It's assured that the list you get is correct. List contains recipe in form of ingridients and instructions, 
-    your task is to use that list to state the apt recipe. Also consider the query as it's what user has asked."""
+    print("list of dishes is: " + list_of_dishes)
+    pre = """User will ask you question in form "list, history, query". You need to use the list to state the recipe. 
+    It's assured that the list you get is correct. List contains recipe in form of ingredients and instructions, 
+    your task is to use that list to state the appropriate recipe. history contains previous conversation between you and user. Consider the query surely as it's what user has asked."""
     try:
-        convo.send_message(pre + " list = " + list_of_dishes + " context = " + context + " query = " + input_query)
+        history_second_str = ', '.join(history_second)
+        convo.send_message(pre + " list = " + list_of_dishes + " history = " + history_second_str + " query = " + input_query)
         response = convo.last.text
+        history_second.append("user input: " + input_query + ". and your response: " + response)
+        print("history of conversation:/n", history_second)
         if len(response) == 0:
             return "None type recipe returned"
         return response

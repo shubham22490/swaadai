@@ -54,7 +54,7 @@ with st.sidebar:
 
     name, img_path, url, desc = getDesc()
     st.markdown(f'<a href = "{url}"><img src="{img_path}" style="max-width: 100%; height: auto;"></a>\n', True)
-    title = f'<a href = "{url}"><h2 style="text-align: center;">' + name + "</h2></a>"
+    title = f'<a style="text-decoration:none; color:white;" href = "{url}"><h2 style="text-align: center;">' + name + "</h2></a>"
     st.markdown(title, True)
     st.markdown("<p style='text-align: justify;'>" + desc + "</p>", True)
     
