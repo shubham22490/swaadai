@@ -74,7 +74,6 @@ def sendQuery(query: str):
     except:
         return "There was an error while fetching the query"
 
-
 def verification(last_text: str, query: str):
     print(last_text)
     try:

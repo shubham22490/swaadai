@@ -16,6 +16,8 @@ st.markdown("""
 
 st.markdown("""
 <style>
+
+    
     .st-emotion-cache-ocqkz7{
         position: fixed;
         bottom: 3rem;
@@ -59,8 +61,7 @@ with st.sidebar:
     st.markdown("<p style='text-align: justify;'>" + desc + "</p>", True)
     
     st.markdown("-----------------------------------------------------")
-    st.markdown("Swaad malfunctioning? Try:")
-    resetHistory = st.button("Refresh")
+    resetHistory = st.button("Clear History")
     if resetHistory:
         gemini_trained.setHistory('state.pickle')
         # Do delete the chat history when refreshed clicked.
